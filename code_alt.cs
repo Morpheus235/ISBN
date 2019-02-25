@@ -11,16 +11,17 @@ namespace ConsoleApplication11
     {
         static void Main(string[] args)
         {
-        
+
             ///<summary>
             ///Main Methode um das Programm zu initialiesieren bzw. Methoden aufzurufen.
-            ///Abfrage welche aktion bzw Methode der Nutzer ausführen wil,
+            ///Abfrage welche aktion bzw Methode der Nutzer ausfÃ¼hren wil,
             ///mithilfe von auslesen von Benutzereingaben.
             ///</summary>
             ISBN isbn = new ISBN();
             EAN ean = new EAN();
             string input;
             string state;
+        begin:
             Console.WriteLine("Auswahl:" + "\n" + "ISBN: 1" + "\n" + "EAN: 2");
             input = Console.ReadLine();
             if (input == "1")
@@ -34,12 +35,15 @@ namespace ConsoleApplication11
             else
             {
                 Console.WriteLine("Eingabe nicht erkannt");
-                return;
+                Console.ReadLine();
+                Console.Clear();
+                goto begin;
+
             }
             if (state == "EAN" || state == "ISBN")
             {
                 Console.WriteLine("Modus: " + state.ToString());
-                Console.WriteLine("Auswahl:" + "\n" + "Datei lesen: 1" + "\n" + "Liste Generieren: 2" + "\n" + "Einzelne Nummer prüfen: 3");
+                Console.WriteLine("Auswahl:" + "\n" + "Datei lesen: 1" + "\n" + "Liste Generieren: 2" + "\n" + "Einzelne Nummer prÃ¼fen: 3");
                 input = Console.ReadLine();
                 if (input == "1" || input == "2" || input == "3")
                 {
@@ -97,9 +101,25 @@ namespace ConsoleApplication11
                 {
                     Console.WriteLine("Eingabe nicht erkannt");
                     Console.ReadLine();
+                    Console.Clear();
+                    goto begin;
+                }
+            end:
+                Console.Clear();
+                Console.WriteLine("Wollen sie das Programm beenden? Y/N");
+                string answer = Console.ReadLine();
+                if (answer == "N" || answer =="n")
+                {
+                    Console.Clear();
+                    goto begin;
+                }
+                else if(answer == "Y" || answer =="y")
+                {
+                    return;
                 }
 
-                Console.ReadLine();
+                goto end;
+                
             }
         }
     }
@@ -109,8 +129,11 @@ namespace ConsoleApplication11
         {
             ///<param name="EANListe_fertig">Ausgewertete EAN Liste als Matrix</param>
             ///<summary>
-            ///Lesen eines EAN Arrays und anschließendes schreiben in eine csv Datei.
+            ///Lesen eines EAN Arrays und anschlieÃŸendes schreiben in eine csv Datei.
             ///</summary>
+            ///
+            try
+            { 
             using (StreamWriter sw = new StreamWriter("ISBN_Fertig" + DateTime.Now.ToString("yyyy-dd-M/HH-mm-ss") + ".csv"))
             {
                 for (int p = 0; p < ISBNListe_fertig.GetLength(0); p++)
@@ -134,13 +157,21 @@ namespace ConsoleApplication11
                 }
             }
 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadLine();
+                throw;
+            }
+
         }
 
         public string[] ISBNreader(string file)
         {
             ///<param name="file">Dateiname unter der die ISBN Liste zu finden ist</param>
             ///<summary>
-            ///Lesen einer Datei um ISBN Nummern auszulessn und anschließendes Konvertieren in ein Array.
+            ///Lesen einer Datei um ISBN Nummern auszulessn und anschlieÃŸendes Konvertieren in ein Array.
             ///</summary>
             try
             {
@@ -156,16 +187,17 @@ namespace ConsoleApplication11
                     string[] ISBNNumbers = ISBNlist.ToArray();
 
                     return ISBNNumbers;
-                    ///<return>Rückgabe bzw. Ausgabe des aus der Datei gelesenen ISBN Arrays</return>
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe des aus der Datei gelesenen ISBN Arrays</return>
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Datei konnte nicht gefunden werden");
+                //Console.WriteLine("Datei konnte nicht gefunden werden");
                 Console.WriteLine(e.Message);
                 Console.ReadLine();
                 throw new FileNotFoundException();
-                ///<return>Rückgabe bzw. Ausgabe das die Datei nicht gefunden werden konnte</return>
+
+                ///<return>RÃ¼ckgabe bzw. Ausgabe das die Datei nicht gefunden werden konnte</return>
             }
         }
 
@@ -173,7 +205,7 @@ namespace ConsoleApplication11
         {
             ///<param name="file">Dateiname unter der die Generierten ISBN Nummern speichern zu sind</param>
             ///<summary>
-            ///Generieren einer Liste mit 500 ISBN Elementen die zufällig erstellt werden und im Nachhinein in eine Datei gespeichert werden.
+            ///Generieren einer Liste mit 500 ISBN Elementen die zufÃ¤llig erstellt werden und im Nachhinein in eine Datei gespeichert werden.
             ///</summary>
             string[] ISBNListeGenerated = new string[500];
 
@@ -188,6 +220,8 @@ namespace ConsoleApplication11
 
                 ISBNListeGenerated[i] = ISBN;
             }
+             try
+            {
             using (StreamWriter sw = new StreamWriter(file + ".csv"))
             {
                 for (int p = 0; p < ISBNListeGenerated.Length; p++)
@@ -197,14 +231,22 @@ namespace ConsoleApplication11
             }
             Console.WriteLine("Liste geschrieben zu: " + file + ".csv");
             Console.ReadLine();
-            ///<return>Rückgabe bzw. Ausgabe des Dateinamens</return>
+            ///<return>RÃ¼ckgabe bzw. Ausgabe des Dateinamens</return>
+        }
+             catch (Exception e)
+             {
+                 Console.WriteLine(e.Message);
+                 Console.ReadLine();
+                 throw;
+                 ///<return>RÃ¼ckgabe bzw. Ausgabe das die Datei nicht gefunden werden konnte</return>
+             }
         }
 
         public void CheckISBN(string ISBN)
         {
-            ///<param name="ISBN">ISBN Nummer die zu prüfen ist</param>
+            ///<param name="ISBN">ISBN Nummer die zu prÃ¼fen ist</param>
             ///<summary>
-            ///Prüfen einer ISBN Nummer bzw berechnen der Prüfziffer 
+            ///PrÃ¼fen einer ISBN Nummer bzw berechnen der PrÃ¼fziffer 
             ///</summary>
             var CheckNum = 0;
 
@@ -213,11 +255,11 @@ namespace ConsoleApplication11
                 if (j < 9)
                 {
                     CheckNum += Int32.Parse(ISBN[j].ToString()) * (j + 1);
-                    Console.WriteLine("Prüfziffer: " + CheckNum);
+                    Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
                 }
             }
             CheckNum = CheckNum % 11;
-            
+
             if (ISBN.Length == 10)
             {
                 if (CheckNum == 10 && ISBN[9].ToString() == "X" || ISBN[9].ToString() != "X" && CheckNum.ToString() == ISBN[9].ToString())
@@ -225,14 +267,14 @@ namespace ConsoleApplication11
                     if (CheckNum == 10)
                     {
                         Console.WriteLine("Richtig " + ISBN);
-                        Console.WriteLine("Prüfziffer: " + "X");
-                        ///<return>Rückgabe bzw. Ausgabe der Richtigen ISBN Nummer und ihrer Prüfziffer</return>
+                        Console.WriteLine("PrÃ¼fziffer: " + "X");
+                        ///<return>RÃ¼ckgabe bzw. Ausgabe der Richtigen ISBN Nummer und ihrer PrÃ¼fziffer</return>
                     }
                     else
                     {
                         Console.WriteLine("Richtig " + ISBN);
-                        Console.WriteLine("Prüfziffer: " + CheckNum);
-                        ///<return>Rückgabe bzw. Ausgabe der Richtigen ISBN Nummer und ihrer Prüfziffer</return>
+                        Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
+                        ///<return>RÃ¼ckgabe bzw. Ausgabe der Richtigen ISBN Nummer und ihrer PrÃ¼fziffer</return>
                     }
                 }
                 else
@@ -240,40 +282,45 @@ namespace ConsoleApplication11
                     if (CheckNum == 10)
                     {
                         Console.WriteLine("Falsch " + ISBN);
-                        Console.WriteLine("Prüfziffer: " + "X");
-                        ///<return>Rückgabe bzw. Ausgabe der Falschen ISBN Nummer und X da die Prüfziffer = 10 ist</return>
+                        Console.WriteLine("PrÃ¼fziffer: " + "X");
+                        ///<return>RÃ¼ckgabe bzw. Ausgabe der Falschen ISBN Nummer und X da die PrÃ¼fziffer = 10 ist</return>
                     }
                     else
                     {
                         Console.WriteLine("Falsch " + ISBN);
-                        Console.WriteLine("Prüfziffer: " + CheckNum);
-                        ///<return>Rückgabe bzw. Ausgabe der Falschen ISBN Nummer und ihrer Richtigen Prüfziffer</return>
+                        Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
+                        ///<return>RÃ¼ckgabe bzw. Ausgabe der Falschen ISBN Nummer und ihrer Richtigen PrÃ¼fziffer</return>
                     }
                 }
             }
-            else
+            else if (ISBN.Length == 9)
             {
                 if (CheckNum == 10)
                 {
                     Console.WriteLine("ISBN: " + ISBN);
-                    Console.WriteLine("Prüfziffer: " + "X");
-                    ///<return>Rückgabe bzw. Ausgabe der ISBN Nummer und X da die Prüfziffer = 10 ist</return>
+                    Console.WriteLine("PrÃ¼fziffer: " + "X");
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe der ISBN Nummer und X da die PrÃ¼fziffer = 10 ist</return>
                 }
                 else
                 {
                     Console.WriteLine("ISBN: " + ISBN);
-                    Console.WriteLine("Prüfziffer: " + CheckNum);
-                    ///<return>Rückgabe bzw. Ausgabe der ISBN Nummer und ihrer Prüfziffer</return>
+                    Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe der ISBN Nummer und ihrer PrÃ¼fziffer</return>
                 }
 
+            }
+            else if (ISBN.Length != 9 || ISBN.Length != 10)
+            {
+                    Console.WriteLine("Keine ISBN Nummer" + ISBN);
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe der Nummer</return>                                      
             }
         }
 
         public string[,] CheckISBNListe(string[] liste)
         {
-            ///<param name="liste">Liste von ISBN Nummern die zu prüfen sind</param>
+            ///<param name="liste">Liste von ISBN Nummern die zu prÃ¼fen sind</param>
             ///<summary>
-            ///Prüfen einer Liste von ISBN Nummern bzw berechnen der Prüfziffern und unterteilen in ein Array in Richtig und Falsch
+            ///PrÃ¼fen einer Liste von ISBN Nummern bzw berechnen der PrÃ¼fziffern und unterteilen in ein Array in Richtig und Falsch
             /// </summary>
             Console.WriteLine("Checke ISBN-Liste");
 
@@ -346,7 +393,7 @@ namespace ConsoleApplication11
                 }
                 Console.WriteLine("Verarbeiten in Richtig und Falsch fertig");
                 return ISBNListe_fertig;
-                ///<return>Rückgabe bzw. Ausgabe der bearbeiteten ISBN Liste in Richtig und Falsch unterteilt</return>
+                ///<return>RÃ¼ckgabe bzw. Ausgabe der bearbeiteten ISBN Liste in Richtig und Falsch unterteilt</return>
 
 
             }
@@ -354,7 +401,7 @@ namespace ConsoleApplication11
                 Console.WriteLine("Liste ist leer");
             Console.ReadLine();
             return null;
-            ///<return>keine Rückgabe da die Liste leer ist und Nachricht an den Nutzer</return>
+            ///<return>keine RÃ¼ckgabe da die Liste leer ist und Nachricht an den Nutzer</return>
         }
 
     }
@@ -367,7 +414,7 @@ namespace ConsoleApplication11
 
             ///<param name="EANListe_fertig">Ausgewertete EAN Liste als Matrix</param>
             ///<summary>
-            ///Lesen eines EAN Arrays und anschließendes schreiben in eine csv Datei.
+            ///Lesen eines EAN Arrays und anschlieÃŸendes schreiben in eine csv Datei.
             ///</summary>
             using (StreamWriter sw = new StreamWriter("EAN_Fertig" + DateTime.Now.ToString("yyyy-dd-M/HH-mm-ss") + ".csv"))
             {
@@ -397,7 +444,7 @@ namespace ConsoleApplication11
         {
             ///<param name="file">Dateiname unter der die EAN Liste zu finden ist</param>
             ///<summary>
-            ///Lesen einer Datei um EAN Nummern auszulessn und anschließendes Konvertieren in ein Array.
+            ///Lesen einer Datei um EAN Nummern auszulessn und anschlieÃŸendes Konvertieren in ein Array.
             ///</summary>
             try
             {
@@ -413,7 +460,7 @@ namespace ConsoleApplication11
                     string[] EANNumbers = EANlist.ToArray();
 
                     return EANNumbers;
-                    ///<return>Rückgabe bzw. Ausgabe des aus der Datei gelesenen EAN Arrays</return>
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe des aus der Datei gelesenen EAN Arrays</return>
                 }
             }
             catch (Exception e)
@@ -422,7 +469,7 @@ namespace ConsoleApplication11
                 Console.WriteLine(e.Message);
                 Console.ReadLine();
                 throw new FileNotFoundException();
-                ///<return>Rückgabe bzw. Ausgabe das die Datei nicht gefunden werden konnte</return>
+                ///<return>RÃ¼ckgabe bzw. Ausgabe das die Datei nicht gefunden werden konnte</return>
             }
         }
 
@@ -430,7 +477,7 @@ namespace ConsoleApplication11
         {
             ///<param name="file">Dateiname unter der die Generierten EAN Nummern speichern zu sind</param>
             ///<summary>
-            ///Generieren einer Liste mit 500 EAN Elementen die zufällig erstellt werden und im Nachhinein in eine Datei gespeichert werden.
+            ///Generieren einer Liste mit 500 EAN Elementen die zufÃ¤llig erstellt werden und im Nachhinein in eine Datei gespeichert werden.
             ///</summary>
             string[] EANListeGenerated = new string[500];
             var random = new Random();
@@ -452,15 +499,15 @@ namespace ConsoleApplication11
             }
             Console.WriteLine("Liste geschrieben zu: " + file + ".csv");
             Console.ReadLine();
-            ///<return>Rückgabe bzw. Ausgabe des Dateinamens</return>
+            ///<return>RÃ¼ckgabe bzw. Ausgabe des Dateinamens</return>
         }
 
         public void CheckEAN(string EAN)
         {
 
-            ///<param name="EAN">EAN Nummer die zu prüfen ist</param>
+            ///<param name="EAN">EAN Nummer die zu prÃ¼fen ist</param>
             ///<summary>
-            ///Prüfen einer EAN Nummer bzw berechnen der Prüfziffer 
+            ///PrÃ¼fen einer EAN Nummer bzw berechnen der PrÃ¼fziffer 
             ///</summary>
             int CheckNum = 0;
             int z = 1;
@@ -497,32 +544,31 @@ namespace ConsoleApplication11
                 {
 
                     Console.WriteLine("Richtig " + EAN);
-                    Console.WriteLine("Prüfziffer: " + CheckNum);
-                    ///<return>Rückgabe bzw. Ausgabe der Richtigen EAN Nummer und ihrer Prüfziffer</return>
+                    Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe der Richtigen EAN Nummer und ihrer PrÃ¼fziffer</return>
                 }
                 else
                 {
                     Console.WriteLine("Falsch " + EAN);
-                    Console.WriteLine("Prüfziffer: " + CheckNum);
-                    ///<return>Rückgabe bzw. Ausgabe der Falschen EAN Nummer und ihrer Prüfziffer</return>
+                    Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
+                    ///<return>RÃ¼ckgabe bzw. Ausgabe der Falschen EAN Nummer und ihrer PrÃ¼fziffer</return>
                 }
             }
             else
             {
                 Console.WriteLine("EAN: " + EAN);
-                Console.WriteLine("Prüfziffer: " + CheckNum);
-                ///<return>Rückgabe bzw. Ausgabe der EAN Nummer und ihrer Prüfziffer</return>
+                Console.WriteLine("PrÃ¼fziffer: " + CheckNum);
+                ///<return>RÃ¼ckgabe bzw. Ausgabe der EAN Nummer und ihrer PrÃ¼fziffer</return>
             }
         }
 
 
 
         public string[,] CheckEANListe(string[] liste)
-
         {
-            ///<param name="liste">Liste von EAN Nummern die zu prüfen sind</param>
+            ///<param name="liste">Liste von EAN Nummern die zu prÃ¼fen sind</param>
             ///<summary>
-            ///Prüfen einer Liste von EAN Nummern bzw berechnen der Prüfziffern und unterteilen in ein Array in Richtig und Falsch
+            ///PrÃ¼fen einer Liste von EAN Nummern bzw berechnen der PrÃ¼fziffern und unterteilen in ein Array in Richtig und Falsch
             /// </summary>
             Console.WriteLine("Checke EAN-Liste");
 
@@ -608,13 +654,13 @@ namespace ConsoleApplication11
                 }
                 Console.WriteLine("Verarbeiten in Richtig und Falsch fertig");
                 return EANListe_fertig;
-                ///<return>Rückgabe bzw. Ausgabe der bearbeiteten EAN Liste in Richtig und Falsch unterteilt</return>
+                ///<return>RÃ¼ckgabe bzw. Ausgabe der bearbeiteten EAN Liste in Richtig und Falsch unterteilt</return>
             }
             else
-                Console.WriteLine("Liste ist leer");
-                Console.ReadLine();
-                return null;
-                ///<return>keine Rückgabe da die Liste leer ist und Nachricht an den Nutzer</return>
+            Console.WriteLine("Liste ist leer");
+            Console.ReadLine();
+            return null;
+            ///<return>keine RÃ¼ckgabe da die Liste leer ist und Nachricht an den Nutzer</return>
         }
 
     }
